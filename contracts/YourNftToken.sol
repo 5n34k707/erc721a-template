@@ -2,14 +2,12 @@
 
 pragma solidity >=0.8.9 <0.9.0;
 
-import 'erc721a/contracts/extensions/ERC721AQueryable.sol';
+import 'erc721a/contracts/ERC721A.sol';
 import '@openzeppelin/contracts/access/Ownable.sol';
 import '@openzeppelin/contracts/utils/cryptography/MerkleProof.sol';
 import '@openzeppelin/contracts/security/ReentrancyGuard.sol';
 
-contract YourNftToken is ERC721AQueryable, Ownable, ReentrancyGuard {
-
-  using Strings for uint256;
+contract YourNftToken is ERC721A, Ownable, ReentrancyGuard {
 
   bytes32 public merkleRoot;
   mapping(address => bool) public whitelistClaimed;
@@ -81,10 +79,9 @@ contract YourNftToken is ERC721AQueryable, Ownable, ReentrancyGuard {
       return hiddenMetadataUri;
     }
 
-    string memory currentBaseURI = _baseURI();
-    return bytes(currentBaseURI).length > 0
-        ? string(abi.encodePacked(currentBaseURI, _tokenId.toString(), uriSuffix))
-        : '';
+    string memory baseUri = _baseURI();
+    return bytes(baseUri).length > 0
+        ? string(abi.encodePacked(baseUri, '/', _toString(_tokenId), uriSuffix)) : '';
   }
 
   function setRevealed(bool _state) public onlyOwner {
